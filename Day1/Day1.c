@@ -3,7 +3,6 @@
 #include <string.h>
 
 #define MAX_LINES 1000  // Maximum number of lines
-#define MAX_LENGTH 15 // Maximum length of each line
 
 void getSubstring(const char *source, char *dest, int start, int length) {
     strncpy(dest, source + start, length);
@@ -18,11 +17,11 @@ int main() {
     FILE *file;
     int lines_left[MAX_LINES];
     int lines_right[MAX_LINES];
-    char line[MAX_LENGTH];
+    char line[15];
     char sub_line[5];
     int line_count = 0;
-    int num;
     int output = 0;
+    
 
 
     // Open the file
@@ -34,22 +33,15 @@ int main() {
 
     // Read lines from the file and store them in the array
     while (fgets(line,  15, file) != NULL) {
-        // Remove newline character if present
+        // Divide line into two Integers
         getSubstring(line, sub_line, 0, 5);
-        num = atoi(sub_line);
-        lines_left[line_count] = num;
+        lines_left[line_count] = atoi(sub_line);
         
         getSubstring(line, sub_line, 8, 5);
-        num = atoi(sub_line);
-        lines_right[line_count] = num;
+        lines_right[line_count] = atoi(sub_line);
 
         line_count++;
 
-        // Check if the maximum number of lines is exceeded
-        if (line_count >= MAX_LINES) {
-            printf("Maximum number of lines exceeded!\n");
-            break;
-        }
     }
 
     fclose(file);
@@ -57,12 +49,27 @@ int main() {
     qsort(lines_left, MAX_LINES, sizeof(int), comp);
     qsort(lines_right, MAX_LINES, sizeof(int), comp);
 
-    // Print the stored lines
-    printf("\nLines read from file:\n");
+
+    /*  Part 1  */ 
+
     for (int i = 0; i < MAX_LINES; i++) {
-        printf("%d\n", abs(lines_left[i] - lines_right[i]));
         output = output + abs(lines_left[i] - lines_right[i]);
     }
-    printf("%d\n", output);
-    return EXIT_SUCCESS;
+    printf("Erste Antwort: %d\n", output);
+
+    /*  Part 2  */
+
+    output = 0;
+
+    for (int i = 0; i < MAX_LINES; i++) {
+        int frequency = 0;
+        for (int j = 0; j < MAX_LINES; j++){
+            if (lines_left[i] == lines_right[j]){
+                frequency ++;
+            }
+        }
+        output += frequency * lines_left[i];
+    }
+    printf("Zweite Antwort: %d\n", output);
+
 }
